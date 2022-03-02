@@ -7,12 +7,13 @@ import java.util.Scanner;
 
 public class Main {
     static Scanner input = new Scanner(System.in);
+    static int priority;
     public static void main(String[] args) {
 
 
         menu();
 
-        ArrayList<String> list = new ArrayList();
+        ArrayList<Task> list = new ArrayList<Task>();
 
         int choice = input.nextInt();
         //System.out.println(choice);
@@ -20,6 +21,7 @@ public class Main {
             // If the user chooses 1
             if (choice == 1) {
                 add(list);
+                System.out.println();
                 // User chooses 2
             } else if (choice == 2) {
                 removeTask(list);
@@ -29,6 +31,9 @@ public class Main {
                 // 4
             } else if (choice == 4) {
                 displayList(list);
+            }
+            else if (choice == 5) {
+            displayListPriority(list);
             }
             menu();
 
@@ -59,19 +64,21 @@ public class Main {
         System.out.println("(2) Remove a task.");
         System.out.println("(3) Update a task.");
         System.out.println("(4) List all tasks.");
-        System.out.println("(4) List all tasks of a certain priority.");
+        System.out.println("(5) List all tasks of a certain priority.");
         System.out.println("(0) Exit.");
     }
 
     //Adds an item to the list
-    static void add(ArrayList a) {
-        System.out.println("Please give of a description of the task you would like to add");
-        String add = input.next();
-        a.add(add);
+    static void add(ArrayList<Task> a) {
+        String add = promptString("Please give of a description of the task you would like to add");
+        priority = promptInt("What Priority does this task have (1 = least, 5 = most)");
+        Task task1 = new Task(add, priority);
+        a.add(task1);
+
 
     }
     //removes an item
-    static void removeTask(ArrayList a) {
+    static void removeTask(ArrayList<Task> a) {
         System.out.println(a);
         System.out.println("Which would you like to remove? (1, 2, 3, 4, Etc...");
         int remove = input.nextInt() - 1;
@@ -87,7 +94,7 @@ public class Main {
 
 
     //
-    static void updateTask(ArrayList a){
+    static void updateTask(ArrayList<Task> a){
         System.out.println(a);
         System.out.println("Which would you like to update? (1, 2, 3, 4, Etc...");
         int remove = input.nextInt() - 1;
@@ -97,14 +104,72 @@ public class Main {
                 remove = input.nextInt() - 1;
             }
         }
-        System.out.println("What would you like to change it to?");
-        String add = input.next();
-        a.set(remove, add);
+        String add = promptString("What would you like to change it to?");
+        priority = promptInt("What Priority does this have?");
+        a.remove(remove);
+        Task newTask = new Task(add, priority);
+        a.add(newTask);
 
     }
-    static void displayList(ArrayList a){
+    static void displayList(ArrayList<Task> a){
         System.out.println("Listing all tasks...");
         System.out.println(a);
     }
 
+    static void displayListPriority(ArrayList<Task> a){
+        input.nextLine();
+        priority = promptInt("Which Priority would you like to look at?");
+        System.out.println("Listing all tasks with the priority " + priority);
+        for (Task task: a) {
+            task.getPriority();
+            if(task.getPriority() == priority){
+                System.out.println(task);
+            }
+        }
+
+    }
+
+    static String promptString(String message) {
+        input.nextLine();
+        System.out.println(message);
+        String userInput = input.nextLine();
+
+        String userString = "";
+        boolean isString = false;
+        while (!isString) {
+            try {
+
+                double b = Double.parseDouble(userInput);
+                System.out.println(userInput + " is not a valid string. " + message);
+                userInput = input.nextLine();
+
+            }
+            catch (Exception e){
+                isString = true;
+            }
+
+
+        }
+
+        return userInput;
+    }
+    static int promptInt(String message) {
+        System.out.println(message);
+        String userInput = input.nextLine();
+
+        int userInt = 0;
+        boolean isInt = false;
+        while (!isInt) {
+            try {
+                userInt = Integer.parseInt(userInput);
+                isInt = true;
+            }
+            catch (NumberFormatException e) {
+                System.out.println(userInput + " is not a valid integer. " + message);
+                userInput = input.nextLine();
+            }
+        }
+
+        return userInt;
+    }
 }
